@@ -1,0 +1,21 @@
+{
+  "name": "crmgraphql",
+  "version": "1.0.0",
+  "description": "Proyecto de GraphQL",
+  "main": "index.js",
+  "scripts": {
+   "start": "node .",
+   "dev": "nodemon"
+  },
+  "keywords": [
+    "GraphQL"
+  ],
+  "author": "Carlos Diaz",
+  "license": "ISC",
+  "dependencies": {
+    "apollo-server": "^2.19.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.6"
+  }
+}

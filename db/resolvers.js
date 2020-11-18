@@ -3,7 +3,7 @@
 //?<------- RESOLVERS-------------------------->*//
 const resolvers = {
     Query: {
-        
+        obtenerCurso: () => "algo"
     }
 };
 

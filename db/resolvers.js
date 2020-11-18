@@ -1,13 +1,10 @@
-const { courses } = require('./courses');
 
 
-
-//?<------------------RESOLVERS-------------------------->*//
+//?<------- RESOLVERS-------------------------->*//
 const resolvers = {
     Query: {
-        getCourse: () => courses,
-        getTechnology: () => courses
+        
     }
 };
 
-module.exports = resolvers
+module.exports = resolvers;

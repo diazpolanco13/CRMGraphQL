@@ -11,8 +11,8 @@ conectarDB();
 
 //?<------------------ SERVER ------------------->*//
 const server = new ApolloServer({
-    typeDefs,
-    resolvers    
+    typeDefs, //Schema
+    resolvers    // Resolver
 });
 
 

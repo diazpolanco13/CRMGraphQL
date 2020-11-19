@@ -7,7 +7,7 @@ const conectarDB = async () => {
     try {
         //* Metodo de conexion a BD
         await mongoose.connect(process.env.DB_MONGO, {
-            //Evita errores de version en mongose 
+            //Evita errores de version en mongoose 
             useNewUrlParser: true, 
             useUnifiedTopology: true, 
             useFindAndModify: false,

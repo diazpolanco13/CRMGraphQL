@@ -1,54 +1,31 @@
-const mongoose = require('mongose');
+const mongoose = require('mongoose');
 
 const UsuariosSchema = mongoose.Schema({
-    nombres: {
+    nombre: {
         type: String,
-        require: true,
+        required: true,
         trim: true
     },
-    apellidos: {
+    apellido: {
         type: String,
-        require: true,
+        required: true,
         trim: true
-    },
-    ci: {
-        type: Number,
-        require: true,
-        trim: true,
-        unique: true
-    },
-    edad: {
-        type: Number,
-        require: true,
-        trim: true,
     },
     email: {
         type: String,
-        require: true,
+        required: true,
         trim: true,
         unique: true
     },
     password: {
         type: String,
-        require: true,
-        trim: true,
-    },
-    direccion: {
-        Estado: {
-            type: String,
-            require: true,
-            trim: true,
-        },
-        Municipio: {
-            type: String,
-            require: true,
-            trim: true,
-        }
+        required: true,
+        trim: true
     }, 
-    fechaCreacionUsuario: {
+    creado: {
         type: Date,
-        default: Date.now()
+        default: Date.now() 
     }
 });
 
-module.exports = mongoose.model('Usuario', UsuariosSchema)
+module.exports = mongoose.model('Usuario', UsuariosSchema);

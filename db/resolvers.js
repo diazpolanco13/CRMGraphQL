@@ -14,12 +14,19 @@ const crearToken = (usuario, palabraSecreta, expiresIn ) => {
 
 //?<------------------------- RESOLVERS-------------------------->*//
 const resolvers = {
-    
+//*<------------ QUERYS--------------->*//
     Query: {
-        obtenerCurso: () => "algo"
+        //? Obtener ID de usuario leido del JWT--------------->*//
+        obtenerUsuario: async (_, { token }) => {
+            const usuarioId = jwt.verify(token, process.env.PALABRASECRETA);
+
+            return usuarioId;
+        }
     },
+
+//*<------------ MUTATIONS--------------->*//
     Mutation: {
-        //?<------------ Mutation para crear usuario--------------->*//
+        //? Mutation para crear usuario--------------->*//
         nuevoUsuario: async (_, { input }) => {
 
             const { email, password } = input;
@@ -51,7 +58,7 @@ const resolvers = {
                 console.log(error);
             }
         },
-        //?<------------ Mutation para Autenticar usuario--------------->*//
+        //? Mutation para Autenticar usuario--------------->*//
         autenticarUsuario: async (_, { input }) => {
             const { email, password } = input
 
@@ -72,8 +79,6 @@ const resolvers = {
             return {
                 token: crearToken(usuarioDB, process.env.PALABRASECRETA, '24h')
             }
-
-
         }
     }
 };

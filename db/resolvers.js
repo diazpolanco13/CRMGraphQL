@@ -50,8 +50,17 @@ const resolvers = {
             }
 
             return producto;
-        }
+        },
+     // Obtener un clientes de la BD--------------->*// 
+        obtenerClientes: async () => {
+            try {
+                const clientes = await Cliente.find({}); //buscar todos los clientes en la BD
 
+                return clientes;
+            } catch (error) {
+                console.log(error)
+            }
+        }
     },
 
 //*<------------ MUTATIONS--------------->*//
@@ -184,7 +193,8 @@ const resolvers = {
             } catch (error) {
                 console.log(error);
             };
-        }
+        },
+        
     }
 };
 

@@ -61,7 +61,7 @@ const resolvers = {
                 console.log(error)
             }
         },
-    // Obtener clientes registrados por endedor especifico--------------->*// 
+    // Obtener clientes registrados por vendedor especifico--------------->*// 
         obtenerClientesVendedor: async (_, {}, ctx ) => {
             try {
                
@@ -71,6 +71,22 @@ const resolvers = {
             } catch (error) {
                 console.log(error)
             }
+        },
+    // Obtener cliente registrado por vendedor especifico--------------->*// 
+        obtenerCliente: async (_, { id }, ctx) => {
+            //Revisar si el cliente existe en la BD
+            const cliente = await Cliente.findById(id);
+            
+            if(!cliente) {
+                throw new Error('El cliente no existe en el sistema')
+            }
+
+            //Solo quien creo al cliente puede verlo
+            if (cliente.vendedor.toString() !== ctx.usuario.id) {
+                throw new Error('No tienes permiso para ver este usuario')
+            }
+
+            return cliente;
         }
     },
 

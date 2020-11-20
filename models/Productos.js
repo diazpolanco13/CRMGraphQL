@@ -3,8 +3,11 @@ const mongoose = require('mongoose');
 const ProductosSchema = mongoose.Schema({
     nombre: {
         type: String,
-        required: true,
-        trim: true
+        required: true
+    },
+    descripcion: {
+        type: String,
+        require: true
     },
     imagen: {
         type: String,
@@ -22,7 +25,7 @@ const ProductosSchema = mongoose.Schema({
         trim: true
     },
     moneda: {
-        type: Number,
+        type: String,
         require: true,
     },
     creado: {

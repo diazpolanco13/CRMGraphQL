@@ -1,9 +1,14 @@
 const Usuario = require('../models/Usuarios');
 const Producto = require('../models/Productos');
+const Productos = require('../models/Productos');
+const Cliente = require('../models/Clientes');
+
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const Productos = require('../models/Productos');
+
 require('dotenv').config({ path: 'variables.env' });
+
+
 
 const crearToken = (usuario, palabraSecreta, expiresIn ) => {
     console.log(usuario);
@@ -14,7 +19,7 @@ const crearToken = (usuario, palabraSecreta, expiresIn ) => {
 
 
 
-//?<------------------------- RESOLVERS-------------------------->*//
+//?<------------------ RESOLVERS-------------------------->*//
 const resolvers = {
 //*<------------ QUERYS--------------->*//
     Query: {
@@ -51,7 +56,7 @@ const resolvers = {
 
 //*<------------ MUTATIONS--------------->*//
     Mutation: {
-        //? ---------- Mutation  USUARIOS--------------->*//
+//? ---------------- Mutation  USUARIOS--------------->*//
         nuevoUsuario: async (_, { input }) => {
 
             const { email, password } = input;
@@ -107,7 +112,7 @@ const resolvers = {
             }
         },
 
-//? ---------- Mutation  PRODUCTOS --------------->*//
+    //? --------------- Mutation  PRODUCTOS --------------->*//
         nuevoProducto: async (_, {input}) => {
             try {
                 const producto = new Producto(input);
@@ -144,6 +149,41 @@ const resolvers = {
             producto = await Producto.findByIdAndRemove({ _id: id });
 
             return "Proucto Eliminado"
+        },
+    //? ---------------- Mutation  CLIENTES --------------->*//
+        nuevoCliente: async (_, { input }, ctx) => {
+            //ctx = contex; el context contiene los datos del usuario que inicio sesion, ver el index
+
+            const { email, documentoIndentidad, telefono } = input;
+            
+            //verifricar si el cliente esta en la BD a traves de algunos datos
+            const clienteE = await Cliente.findOne({ email });
+            const clienteD = await Cliente.findOne({ documentoIndentidad });
+            const clienteT = await Cliente.findOne({ telefono });
+            
+            //Activamos posibles errores
+            if (clienteE) {
+                throw new Error('Ya existe un cliente registrado con este correo');
+            } else if (clienteD) {
+                throw new Error('Ya existe un cliente registrado con este documento de identidad');
+            } else if (clienteT) {
+                throw new Error('Ya existe un cliente registrado con este telefono');
+            };
+
+            //Intanciamos la contante nuevo cliente con la estructura del modelo de la BD
+            const nuevoCliente = new Cliente(input);
+            
+            // asignamos el ID del usuario(vendedor) a la propiedad vendedor del cliente que se esta registrando
+            nuevoCliente.vendedor = ctx.usuario.id;
+            
+            //Guardardamos el nuevo cliente en la BD
+            try {  
+                const clienteGuardado = await nuevoCliente.save();
+
+                return clienteGuardado; 
+            } catch (error) {
+                console.log(error);
+            };
         }
     }
 };

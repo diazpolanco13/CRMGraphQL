@@ -51,10 +51,21 @@ const resolvers = {
 
             return producto;
         },
-     // Obtener un clientes de la BD--------------->*// 
+     // Obtener clientes de la BD--------------->*// 
         obtenerClientes: async () => {
             try {
                 const clientes = await Cliente.find({}); //buscar todos los clientes en la BD
+
+                return clientes;
+            } catch (error) {
+                console.log(error)
+            }
+        },
+    // Obtener clientes registrados por endedor especifico--------------->*// 
+        obtenerClientesVendedor: async (_, {}, ctx ) => {
+            try {
+               
+                const clientes = await Cliente.find( { vendedor: ctx.usuario.id.toString() } ); //buscar todos los clientes en la BD en base al id del vendedor
 
                 return clientes;
             } catch (error) {

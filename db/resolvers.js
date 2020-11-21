@@ -5,6 +5,7 @@ const Cliente = require('../models/Clientes');
 
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const { findByIdAndRemove } = require('../models/Usuarios');
 
 require('dotenv').config({ path: 'variables.env' });
 
@@ -221,6 +222,54 @@ const resolvers = {
                 console.log(error);
             };
         },
+        actualizarCliente: async (_, {id,  input }, ctx) => {
+
+            //Revisar si el cliente existe o no
+            let cliente = await Cliente.findById(id);
+            
+            if(!cliente) {
+                throw new Error('Este cliente no existe en el sistema')
+            }
+
+            //Solo quien creo al cliente puede editarlo
+            if (cliente.vendedor.toString() !== ctx.usuario.id) {
+                throw new Error('No tienes permiso para editar a este cliente')
+            }
+
+            //gardarlo en la Base de datos
+            try {
+                cliente = await Cliente.findOneAndUpdate({ _id : id }, input, { new: true });
+                return cliente;
+                
+            } catch (error) {
+                console.log(error)
+            }
+        },
+        eliminarCliente: async (_, { id }, ctx) => {
+            //verificar si el cliente existe
+            let cliente = await Cliente.findById(id);
+
+            if (!cliente) {
+                 throw new Error('El cliente no existe')
+            }
+
+            //Solo el usuario que lo creo puede eliminarlo
+            if (cliente.vendedor.toString() !== ctx.usuario.id) {
+                throw new Error('No tienes los permisos para eliminar a este cliente');
+            }
+
+            //Eliminar el clienet
+            try {
+                
+                cliente = await Cliente.findByIdAndRemove({ _id: id })
+                
+                return "Cliente eliminado"
+            } catch (error) {
+                console.log(error)
+            }
+
+
+        }
         
     }
 };

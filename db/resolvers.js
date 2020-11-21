@@ -365,7 +365,7 @@ const resolvers = {
         },
         actualizarPedido: async (_, { id, input }, ctx ) => {
             const { cliente } = input;
-            console.log(ctx)
+
             //Verificar si el pedido existe
             const existePedido = await Pedido.findById(id)
             if (!existePedido) {
@@ -382,7 +382,7 @@ const resolvers = {
             if (existeCliente.vendedor.toString() !== ctx.usuario.id) {
                 throw new Error('Usted no puede actualizar este pedido, ya que le pertence a otro vendedor');
             }
-
+            
             //Revisar el stock
             for await (const articuloPedido of input.pedido) {
                 //extraemos el id de cada articulo
@@ -404,16 +404,37 @@ const resolvers = {
             }
 
             //Gardar el pedido
+            
             try {
-                
                 pedidoActualizado = await Pedido.findOneAndUpdate({ _id: id }, input, { new: true });
                 
                 return pedidoActualizado;
             } catch (error) {
                 console.log(error)
             }
+        },
+        eliminarPedido: async (_, { id }, ctx) => {
+            //verificar si el pedido existe
+            let pedido = await Pedido.findById(id);
 
+            if (!pedido) {
+                 throw new Error('El pedido no existe')
+            }
 
+            //Solo el usuario que lo creo puede eliminarlo
+            if (pedido.vendedor.toString() !== ctx.usuario.id) {
+                throw new Error('No tienes los permisos para eliminar este pedido');
+            }
+
+            //Eliminar el clienet
+            try {
+                
+                pedidoEliminado = await Pedido.findByIdAndRemove({ _id: id })
+                
+                return "Pedido eliminado"
+            } catch (error) {
+                console.log(error)
+            }
         }
     }
 };

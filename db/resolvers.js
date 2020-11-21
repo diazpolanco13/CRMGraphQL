@@ -103,13 +103,32 @@ const resolvers = {
         obtenerPedidosVendedor: async (_, {}, ctx) => {
             try {
                 const pedidos = await Pedido.find( { vendedor: ctx.usuario.id.toString() } ); //buscar todos los clientes en la BD en base al id del vendedor
-
+                
                 return pedidos;
-
+                
             } catch (error) {
                 console.log(error)
             }
+        },
+        // Obtener un pedido en especifico--------------->*// 
+        obtenerPedido: async ( _, { id }, ctx ) => {
+            //Verificar si el pedido existencia
+            const pedido = await Pedido.findById(id);
+            
+            if (!pedido) {
+                throw new Error('El pedio no existe');
+            }
+
+            //Solo quien lo creo puede verlo
+            if (pedido.vendedor.toString() !== ctx.usuario.id) {
+                throw new Error('No tienes permiso para ver este pedido');
+            }
+            //Retornar resultado
+
+            return pedido;
         }
+
+
     },
 
 

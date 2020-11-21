@@ -123,6 +123,7 @@ const typeDefs = gql`
         #Pedidos
         obtenerPedidos: [Pedido]
         obtenerPedidosVendedor: [Pedido]
+        obtenerPedido(id: ID!): Pedido
     }
 
     type Mutation {

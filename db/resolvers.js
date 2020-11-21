@@ -362,6 +362,58 @@ const resolvers = {
                 console.log(error)
             }
             
+        },
+        actualizarPedido: async (_, { id, input }, ctx ) => {
+            const { cliente } = input;
+            console.log(ctx)
+            //Verificar si el pedido existe
+            const existePedido = await Pedido.findById(id)
+            if (!existePedido) {
+                throw new Error('El pedido no existe');
+            }
+
+            // Veridficar si el clinete existe
+            const existeCliente = await Cliente.findById(cliente)
+            if (!existeCliente) {
+                throw new Error('El cliente no existe')
+            }
+            
+            //Verificar si el cliente y pedido pertenecen al vendedor
+            if (existeCliente.vendedor.toString() !== ctx.usuario.id) {
+                throw new Error('Usted no puede actualizar este pedido, ya que le pertence a otro vendedor');
+            }
+
+            //Revisar el stock
+            for await (const articuloPedido of input.pedido) {
+                //extraemos el id de cada articulo
+                const { id } = articuloPedido;
+                
+                //buscamos cual es el producto que le conresponde al ID
+                const producto = await Producto.findById(id);
+
+                //Comprobamos si la canitdad de articulos que vienen en el pedido, son mayores a la cantidad de productos que tenemos en existencia
+                if (articuloPedido.cantidad > producto.existencia) {
+                    throw new Error(`No puedes actualizar ${articuloPedido.cantidad} de ${producto.nombre} ya que solo quedan ${producto.existencia} en existencia`)
+                
+                } else {
+                    //Restar la cantidad a los disponible
+                    producto.existencia = producto.existencia - articuloPedido.cantidad
+
+                    await producto.save();
+                }
+            }
+
+            //Gardar el pedido
+            try {
+                
+                pedidoActualizado = await Pedido.findOneAndUpdate({ _id: id }, input, { new: true });
+                
+                return pedidoActualizado;
+            } catch (error) {
+                console.log(error)
+            }
+
+
         }
     }
 };

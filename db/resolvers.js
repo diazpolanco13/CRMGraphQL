@@ -126,9 +126,12 @@ const resolvers = {
             //Retornar resultado
 
             return pedido;
+        },
+        obtenerPedidoEstado: async (_, { estado }, ctx) => {
+            const pedidos= await Pedido.find({vendedor: ctx.usuario.id, estado})
+            
+            return pedidos;
         }
-
-
     },
 
 

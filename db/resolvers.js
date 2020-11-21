@@ -75,22 +75,43 @@ const resolvers = {
             }
         },
     // Obtener cliente registrado por vendedor especifico--------------->*// 
-        obtenerCliente: async (_, { id }, ctx) => {
-            //Revisar si el cliente existe en la BD
-            const cliente = await Cliente.findById(id);
-            
+    obtenerCliente: async (_, { id }, ctx) => {
+        //Revisar si el cliente existe en la BD
+        const cliente = await Cliente.findById(id);
+        
             if(!cliente) {
                 throw new Error('El cliente no existe en el sistema')
             }
-
+            
             //Solo quien creo al cliente puede verlo
             if (cliente.vendedor.toString() !== ctx.usuario.id) {
                 throw new Error('No tienes permiso para ver este usuario')
             }
 
             return cliente;
+        },
+        // Obtener todos los pedidos--------------->*// 
+        obtenerPedidos: async () => {
+            try {
+                const pedidos = await Pedido.find({});
+                return pedidos;
+            } catch (error) {
+                console.log(error)
+            }
+        },
+        // Obtener todos los pedidos del vendedor que esta logueado--------------->*// 
+        obtenerPedidosVendedor: async (_, {}, ctx) => {
+            try {
+                const pedidos = await Pedido.find( { vendedor: ctx.usuario.id.toString() } ); //buscar todos los clientes en la BD en base al id del vendedor
+
+                return pedidos;
+
+            } catch (error) {
+                console.log(error)
+            }
         }
     },
+
 
 //*<------------ MUTATIONS--------------->*//
     Mutation: {

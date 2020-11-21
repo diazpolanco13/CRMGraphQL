@@ -25,6 +25,7 @@ const crearToken = (usuario, palabraSecreta, expiresIn ) => {
 const resolvers = {
 //*<------------ QUERYS--------------->*//
     Query: {
+    //? ----------------   QUERY  USUARIOS --------------->*//
         // Obtener ID de usuario leido del JWT--------------->*//
         obtenerUsuario: async (_, { token }) => {
             const usuarioId = jwt.verify(token, process.env.PALABRASECRETA);
@@ -32,7 +33,7 @@ const resolvers = {
             return usuarioId;
         },
         // Obtener Productos de la BD--------------->*//
-
+    //? ----------------   QUERY  PRODUCTOS --------------->*//
         obtenerProductos: async () => {
             try {
                 const productos = await Productos.find({});//Buscar todos los productos en al BD
@@ -53,6 +54,7 @@ const resolvers = {
 
             return producto;
         },
+    //? ----------------   QUERY  CLIENTES --------------->*//
      // Obtener clientes de la BD--------------->*// 
         obtenerClientes: async () => {
             try {
@@ -90,6 +92,7 @@ const resolvers = {
 
             return cliente;
         },
+    //? ----------------   QUERY  PEDIDOS --------------->*//
         // Obtener todos los pedidos--------------->*// 
         obtenerPedidos: async () => {
             try {
@@ -131,9 +134,32 @@ const resolvers = {
             const pedidos= await Pedido.find({vendedor: ctx.usuario.id, estado})
             
             return pedidos;
+        },
+    //? ----------------   QUERYS  AVANZADOS --------------->*//
+        mejoresClientes: async () => {
+            const clientes = await Pedido.aggregate([
+                { $match: { estado: "COMPLETADO" } }, //Busca los pedidos marcados como completados
+                {
+                    $group: {
+                        _id: "$cliente",
+                        total: { $sum: '$total' }
+                    } // Saber cuanto nos ha comprado un cliente
+                },
+                {
+                    $lookup: {
+                        from: 'clientes',
+                        localField: "_id",
+                        foreignField: "_id",
+                        as: "cliente"
+                    } // Saber quien es el cliente
+                },
+                {
+                    $sort : {total : -1} //Ordena al cliente de mayor a menor
+                }
+            ]);
+            return clientes;
         }
     },
-
 
 //*<------------ MUTATIONS--------------->*//
     Mutation: {

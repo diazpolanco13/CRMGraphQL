@@ -1,11 +1,12 @@
 const Usuario = require('../models/Usuarios');
 const Producto = require('../models/Productos');
 const Productos = require('../models/Productos');
+const Pedido = require('../models/Pedidos');
 const Cliente = require('../models/Clientes');
 
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { findByIdAndRemove } = require('../models/Usuarios');
+
 
 require('dotenv').config({ path: 'variables.env' });
 
@@ -267,8 +268,61 @@ const resolvers = {
             } catch (error) {
                 console.log(error)
             }
+        },
+        //? ---------------- Mutation  PEDIDOS --------------->*//
+        nuevoPedido: async (_, { input }, ctx) => {
+            
+            const { cliente } = input;
+            // Verificar si el clinete existe o no ---> 
+            let clienteExiste = await Cliente.findById(cliente);
+            
+            if (!clienteExiste) {
+                throw new Error('El cliente no existe');
+            }
+            
+            // Verificar si el cliente fue registrado por este vendedor--> 
+            if (clienteExiste.vendedor.toString() !== ctx.usuario.id) {
+                throw new Error('Usted no puede venderle a este cliente, ya que le pertence a otro vendedor');
+            }
+
+            // Revisar que el stock este disponible -->
+            
+            //iteramos todos los articulos que vengan en el input.pedido
+            for await (const articuloPedido of input.pedido) {
+                //extraemos el id de cada articulo
+                const { id } = articuloPedido;
+                
+                //buscamos cual es el producto que le conresponde al ID
+                const producto = await Producto.findById(id);
+
+                //Comprobamos si la canitdad de articulos que vienen en el pedido, son mayores a la cantidad de productos que tenemos en existencia
+                if (articuloPedido.cantidad > producto.existencia) {
+                    throw new Error(`No puedes comprar ${articuloPedido.cantidad} de ${producto.nombre} ya que solo quedan ${producto.existencia} en existencia`)
+                
+                } else {
+                    //Restar la cantidad a los disponible
+                    producto.existencia = producto.existencia - articuloPedido.cantidad
+
+                    await producto.save();
+                }
+            }
+
+            try {
+            //Crear nuevo pedido
+            const nuevoPedido = new Pedido(input);
+            
+            // Asignarle un vendedor
+            nuevoPedido.vendedor = ctx.usuario.id; 
+
+            // Guardarlo en la base de datos
+            const pedidoRealizado = await nuevoPedido.save();
+
+            return pedidoRealizado;
+            } catch (error) {
+                console.log(error)
+            }
+            
         }
-        
     }
 };
 

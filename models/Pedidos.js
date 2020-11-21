@@ -22,12 +22,12 @@ const PedidosSchema = mongoose.Schema({
         ref: "Usuario"
     },
     estado: {
-        trype: String,
+        type: String,
         default: "PENDIENTE"
     },
     creado: {
         type: Date,
-        detault: Date.now()
+        default: Date.now()
     }
 });
 

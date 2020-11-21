@@ -4,7 +4,7 @@ const { gql } = require('apollo-server');
 //?<---- SCHEMA - (type Definition) -------------------------->*//
 
 const typeDefs = gql`
-
+#---- TYPES --------------------------->
     type Usuario {
         id: ID
         nombre: String
@@ -35,14 +35,27 @@ const typeDefs = gql`
         telefono: String
         vendedor: ID
     }
+    type Pedido {
+        id: ID
+        pedido: [PedidoGrupo]
+        total: Float
+        cliente: ID
+        vendedor: ID
+        fecha: String
+        estado: EstadoPedido
+    }
+    type PedidoGrupo {
+        id: ID,
+        cantidad: Int
+    }
 
+#---INPUTS----------------------------->
     input UsuarioInput {
         nombre: String!
         apellido: String!
         email: String!
         password: String!
     }
-
 
     input AutenticarInput {
         email: String!
@@ -54,7 +67,7 @@ const typeDefs = gql`
         descripcion: String
         existencia: Int!
         precio: Float!
-        moneda: String!
+        moneda: TipoMoneda
         imagen: String
     }
 
@@ -65,9 +78,35 @@ const typeDefs = gql`
         email: String!
         telefono: String
     }
+    input PedidoProductoInput {
+        id: ID
+        cantidad: Int
+    }
 
+    input PedidoInput {
+        pedido: [PedidoProductoInput]
+        total: Float!
+        cliente: ID!
+        estado: EstadoPedido
+    }
 
-#------- Query y Mutation------------
+#---ENUM----------------------------->
+
+    enum EstadoPedido {
+        PENDIENTE
+        COMPLETADO
+        CANCELADO
+    }
+
+    enum TipoMoneda {
+        DOLARES
+        EUROS
+        BOLIVARES
+    }
+
+#----------------------------------------------------
+#-------------------Query y Mutation-----------------
+#----------------------------------------------------
     type Query {
         #Usuarios
         obtenerUsuario(token: String!) : Usuario
@@ -95,7 +134,10 @@ const typeDefs = gql`
         #Cliente
         nuevoCliente(input: ClienteInput) : Cliente
         actualizarCliente( id: ID!, input: ClienteInput): Cliente
-        eliminarCliente(id: ID!): String 
+        eliminarCliente(id: ID!): String
+
+        #Pedidos
+        nuevoPedido(input: PedidoInput): Pedido 
     }
 `;
 

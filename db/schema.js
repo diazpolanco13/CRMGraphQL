@@ -10,9 +10,9 @@ const typeDefs = gql`
         nombre: String
         apellido: String
         email: String
+        telefono: String
         creado: String
     }
-
     type Token {
         token: String
     }
@@ -52,12 +52,17 @@ const typeDefs = gql`
         total: Float
         cliente: [Cliente]
     }
+    type TopVendedor {
+        total: Float
+        vendedor: [Usuario]
+    }
 
 #---INPUTS----------------------------->
     input UsuarioInput {
         nombre: String!
         apellido: String!
         email: String!
+        telefono: String
         password: String!
     }
 
@@ -132,12 +137,15 @@ const typeDefs = gql`
 
         #Busquedas avanzadas
         mejoresClientes: [TopCliente]
+        mejoresVendedores: [TopVendedor]
+        buscarProductos(texto: String!) : [Producto]
     }
 
     type Mutation {
         #Usuarios:
         nuevoUsuario( input: UsuarioInput ) : Usuario
         autenticarUsuario( input: AutenticarInput ): Token
+        actualizarUsuario( id: ID!, input: UsuarioInput ) : Usuario
         
         #Productos:
         nuevoProducto(input: ProductoInput) : Producto

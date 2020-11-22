@@ -154,10 +154,44 @@ const resolvers = {
                     } // Saber quien es el cliente
                 },
                 {
+                    $limit : 10 //Define la cantidad de mejores clientes
+                },
+                {
                     $sort : {total : -1} //Ordena al cliente de mayor a menor
                 }
             ]);
             return clientes;
+        },
+        mejoresVendedores: async () => {
+            const vendedores = await Pedido.aggregate([
+                { $match: { estado: "COMPLETADO" } }, //Busca los pedidos marcados como completados
+                {
+                    $group: {
+                        _id: "$vendedor",
+                        total: { $sum: '$total' }
+                    } // Saber cuanto nos ha comprado un cliente
+                },
+                {
+                    $lookup: {
+                        from: 'usuarios',
+                        localField: "_id",
+                        foreignField: "_id",
+                        as: "vendedor"
+                    } // Saber quien es el cliente
+                },
+                {
+                    $limit : 3 //Define la cantidad de mejores vendedores
+                },
+                {
+                    $sort : {total : -1} //Ordena al cliente de mayor a menor
+                }
+            ])
+            return vendedores;
+        },
+        buscarProductos: async (_, { texto }) => {
+            const productos = await Producto.find({ $text: { $search: texto } }).limit(5);
+
+            return productos;
         }
     },
 
@@ -218,6 +252,30 @@ const resolvers = {
                 token: crearToken(usuarioDB, process.env.PALABRASECRETA, '24h')
             }
         },
+            actualizarUsuario: async (_, {id,  input }, ctx) => {
+                console.log('Datos id', id)
+                console.log('Datos input', input)
+                //Revisar si el cliente existe o no
+                let usuario = await Usuario.findById(id);
+                
+                if(!usuario) {
+                    throw new Error('Este usuario no existe en el sistema')
+                }
+    
+                //Solo quien creo al cliente puede editarlo
+                if (usuario.id.toString() !== ctx.usuario.id) {
+                    throw new Error('No tienes permiso para editar a este usaurio')
+                }
+    
+                //gardarlo en la Base de datos
+                try {
+                    usaurio = await Usuario.findOneAndUpdate({ _id : id }, input, { new: true });
+                    return usaurio;
+                    
+                } catch (error) {
+                    console.log(error)
+                }
+            },
 
     //? --------------- Mutation  PRODUCTOS --------------->*//
         nuevoProducto: async (_, {input}) => {

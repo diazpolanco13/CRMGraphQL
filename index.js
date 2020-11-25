@@ -18,15 +18,16 @@ const server = new ApolloServer({
     context: ({ req }) => {
         // console.log(req.headers['authorization'])
         
+        // console.log('Headers',req.headers);
+
         //Se obtiene del headers el token del usuario 
         const token = req.headers['authorization'] || '';
-        
         if (token) {
             try {
-                //Si el token existe, desencriptar el token y guardarlo en la constante usuario
-                const usuario = jwt.verify(token, process.env.PALABRASECRETA)
+                //Si el token existe, desencriptar el token y guardarlo en la constante usuario, tambien se elimina la palabra Bearar que viene en el token del frontend
+                const usuario = jwt.verify(token.replace('Bearer ', ''), process.env.PALABRASECRETA);
                 
-                // console.log(usuario);
+                console.log('Los datos con token', usuario);
                 return {
                     usuario
                 }

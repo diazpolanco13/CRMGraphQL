@@ -20,17 +20,15 @@ const crearToken = (usuario, palabraSecreta, expiresIn ) => {
 }
 
 
-
 //?<------------------ RESOLVERS-------------------------->*//
 const resolvers = {
 //*<------------ QUERYS--------------->*//
     Query: {
     //? ----------------   QUERY  USUARIOS --------------->*//
         // Obtener ID de usuario leido del JWT--------------->*//
-        obtenerUsuario: async (_, { token }) => {
-            const usuarioId = jwt.verify(token, process.env.PALABRASECRETA);
+        obtenerUsuario: async (_, { }, ctx) => {
             
-            return usuarioId;
+            return ctx.usuario;
         },
         // Obtener Productos de la BD--------------->*//
     //? ----------------   QUERY  PRODUCTOS --------------->*//
@@ -58,7 +56,7 @@ const resolvers = {
      // Obtener clientes de la BD--------------->*// 
         obtenerClientes: async () => {
             try {
-                const clientes = await Cliente.find({}); //buscar todos los clientes en la BD
+                const clientes = await Cliente.find({}).limit(10); //buscar todos los clientes en la BD
 
                 return clientes;
             } catch (error) {
@@ -181,7 +179,7 @@ const resolvers = {
                 },
                 {
                     $limit : 3 //Define la cantidad de mejores vendedores
-                },
+                },  
                 {
                     $sort : {total : -1} //Ordena al cliente de mayor a menor
                 }
@@ -318,7 +316,8 @@ const resolvers = {
     //? ---------------- Mutation  CLIENTES --------------->*//
         nuevoCliente: async (_, { input }, ctx) => {
             //ctx = contex; el context contiene los datos del usuario que inicio sesion, ver el index
-
+            console.log(input)
+            console.log(ctx)
             const { email, documentoIndentidad, telefono } = input;
             
             //verifricar si el cliente esta en la BD a traves de algunos datos
@@ -326,7 +325,7 @@ const resolvers = {
             const clienteD = await Cliente.findOne({ documentoIndentidad });
             const clienteT = await Cliente.findOne({ telefono });
             
-            //Activamos posibles errores
+            //Activamos posibles erroresz
             if (clienteE) {
                 throw new Error('Ya existe un cliente registrado con este correo');
             } else if (clienteD) {
@@ -391,7 +390,8 @@ const resolvers = {
                 
                 cliente = await Cliente.findByIdAndRemove({ _id: id })
                 
-                return "Cliente eliminado"
+                return "El Cliente ha sido emilinado"
+            
             } catch (error) {
                 console.log(error)
             }

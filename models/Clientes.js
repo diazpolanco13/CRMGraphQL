@@ -2,6 +2,10 @@ const moongose = require('mongoose');
 
 const ClientesSchema = moongose.Schema({
 
+    imagen: {
+        type: String,
+        require: false
+    },
     nombre: {
         type: String,
         require: true,
@@ -18,6 +22,11 @@ const ClientesSchema = moongose.Schema({
         trim: true,
         unique: true
     },
+    profesion: {
+        type: String,
+        require: false,
+        trim: true
+    },
     email: {
         type: String,
         require: true,
@@ -31,14 +40,35 @@ const ClientesSchema = moongose.Schema({
         unique: true
     },
     direccion: {
-        Estado: {
+        estado: {
             type: String,
             require: false
         },
         municipio: {
             type: String,
             require: false
+        },
+        lugar: {
+            type: String,
+            require: false       
         }
+    },
+    planAfiliacion: {
+        ofertas: {
+            type: Boolean,
+            require: false,
+            default: false
+        },
+        recordatorio: {
+            type: Boolean,
+            require: false,
+            default: false
+        },
+        suscripcion: {
+            type: Boolean,
+            require: false,
+            default: false
+        },
     },
     vendedor: {
         type: moongose.Schema.Types.ObjectId,

@@ -28,13 +28,30 @@ const typeDefs = gql`
     }
     type Cliente {
         id: ID
+        imagen: String
         nombre: String
         apellido: String
         documentoIndentidad: String
+        profesion: String
         email: String
         telefono: String
+        direccion: DireccionType
+        planAfiliacion: AfiliacionesType
         vendedor: ID
+        creado: String
     }
+    type DireccionType {
+        estado: String
+        municipio: String
+        lugar: String
+    }
+    type AfiliacionesType {
+        ofertas: Boolean
+        recordatorio: Boolean
+        suscripcion: Boolean
+    }
+
+
     type Pedido {
         id: ID
         pedido: [PedidoGrupo]
@@ -65,12 +82,10 @@ const typeDefs = gql`
         telefono: String
         password: String!
     }
-
     input AutenticarInput {
         email: String!
         password: String!
     }
-
     input ProductoInput {
         nombre: String
         descripcion: String
@@ -79,24 +94,36 @@ const typeDefs = gql`
         moneda: TipoMoneda
         imagen: String
     }
-
     input ClienteInput {
+        imagen: String
         nombre: String!
         apellido: String!
         documentoIndentidad: String
+        profesion: String
         email: String!
         telefono: String
+        direccion: DireccionInput
+        planAfiliacion: AfiliacionesInput
     }
-    input PedidoProductoInput {
-        id: ID
-        cantidad: Int
+    input DireccionInput {
+        estado: String
+        municipio: String
+        lugar: String
     }
-
+    input AfiliacionesInput {
+        ofertas: Boolean
+        recordatorio: Boolean
+        suscripcion: Boolean
+    }
     input PedidoInput {
         pedido: [PedidoProductoInput]
         total: Float
         cliente: ID
         estado: EstadoPedido
+    }
+    input PedidoProductoInput {
+        id: ID
+        cantidad: Int
     }
 
 #---ENUM----------------------------->
@@ -118,7 +145,7 @@ const typeDefs = gql`
 #----------------------------------------------------
     type Query {
         #Usuarios
-        obtenerUsuario(token: String!) : Usuario
+        obtenerUsuario : Usuario
 
         #Productos
         obtenerProductos: [Producto]

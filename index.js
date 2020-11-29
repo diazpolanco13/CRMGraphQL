@@ -27,7 +27,7 @@ const server = new ApolloServer({
                 //Si el token existe, desencriptar el token y guardarlo en la constante usuario, tambien se elimina la palabra Bearar que viene en el token del frontend
                 const usuario = jwt.verify(token.replace('Bearer ', ''), process.env.PALABRASECRETA);
                 
-                console.log('Los datos con token', usuario);
+                // console.log('Los datos con token', usuario);
                 return {
                     usuario
                 }

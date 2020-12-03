@@ -314,6 +314,9 @@ const resolvers = {
             return "Proucto Eliminado"
         },
     //? ---------------- Mutation  CLIENTES --------------->*//
+        
+
+        
         nuevoCliente: async (_, { input }, ctx) => {
             //ctx = contex; el context contiene los datos del usuario que inicio sesion, ver el index
             console.log(input)

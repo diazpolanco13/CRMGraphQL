@@ -87,8 +87,8 @@ const typeDefs = gql`
         password: String!
     }
     input ProductoInput {
-        nombre: String
-        descripcion: String
+        nombre: String!
+        descripcion: String!
         existencia: Int!
         precio: Float!
         moneda: TipoMoneda
@@ -135,9 +135,9 @@ const typeDefs = gql`
     }
 
     enum TipoMoneda {
-        DOLARES
-        EUROS
-        BOLIVARES
+        Dolares
+        Euros
+        Bolivares
     }
 
 #----------------------------------------------------

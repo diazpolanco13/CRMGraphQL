@@ -103,10 +103,10 @@ const resolvers = {
         // Obtener todos los pedidos del vendedor que esta logueado--------------->*// 
         obtenerPedidosVendedor: async (_, {}, ctx) => {
             try {
-                const pedidos = await Pedido.find( { vendedor: ctx.usuario.id.toString() } ); //buscar todos los clientes en la BD en base al id del vendedor
-                
-                return pedidos;
-                
+                const pedidos = await Pedido.find( { vendedor: ctx.usuario.id.toString() } ).populate('cliente'); //buscar todos los clientes en la BD en base al id del vendedor
+                // console.log(pedidos)
+
+                return pedidos;  
             } catch (error) {
                 console.log(error)
             }
@@ -474,23 +474,25 @@ const resolvers = {
             }
             
             //Revisar el stock
-            for await (const articuloPedido of input.pedido) {
-                //extraemos el id de cada articulo
-                const { id } = articuloPedido;
-                
-                //buscamos cual es el producto que le conresponde al ID
-                const producto = await Producto.findById(id);
-
-                //Comprobamos si la canitdad de articulos que vienen en el pedido, son mayores a la cantidad de productos que tenemos en existencia
-                if (articuloPedido.cantidad > producto.existencia) {
-                    throw new Error(`No puedes actualizar ${articuloPedido.cantidad} de ${producto.nombre} ya que solo quedan ${producto.existencia} en existencia`)
-                
-                } else {
-                    //Restar la cantidad a los disponible
-                    producto.existencia = producto.existencia - articuloPedido.cantidad
-
-                    await producto.save();
-                }
+            if (input.pedido) {
+                for await (const articuloPedido of input.pedido) {
+                    //extraemos el id de cada articulo
+                    const { id } = articuloPedido;
+                    
+                    //buscamos cual es el producto que le conresponde al ID
+                    const producto = await Producto.findById(id);
+    
+                    //Comprobamos si la canitdad de articulos que vienen en el pedido, son mayores a la cantidad de productos que tenemos en existencia
+                    if (articuloPedido.cantidad > producto.existencia) {
+                        throw new Error(`No puedes actualizar ${articuloPedido.cantidad} de ${producto.nombre} ya que solo quedan ${producto.existencia} en existencia`)
+                    
+                    } else {
+                        //Restar la cantidad a los disponible
+                        producto.existencia = producto.existencia - articuloPedido.cantidad
+    
+                        await producto.save();
+                    }
+                }                
             }
 
             //Gardar el pedido

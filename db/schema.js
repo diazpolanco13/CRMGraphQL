@@ -56,14 +56,16 @@ const typeDefs = gql`
         id: ID
         pedido: [PedidoGrupo]
         total: Float
-        cliente: ID
+        cliente: Cliente
         vendedor: ID
         creado: String
         estado: EstadoPedido
     }
     type PedidoGrupo {
         id: ID,
-        cantidad: Int
+        cantidad: Int,
+        nombre: String,
+        precio: Float
     }
     type TopCliente {
         total: Float
@@ -117,13 +119,14 @@ const typeDefs = gql`
     }
     input PedidoInput {
         pedido: [PedidoProductoInput]
-        total: Float
         cliente: ID
         estado: EstadoPedido
     }
     input PedidoProductoInput {
-        id: ID
-        cantidad: Int
+        id: ID,
+        cantidad: Int,
+        nombre: String,
+        precio: Float
     }
 
 #---ENUM----------------------------->

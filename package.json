@@ -10,7 +10,7 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "heroku-postbuild": "npm run build"
-    },
+  },
   "keywords": [
     "GraphQL"
   ],
@@ -19,7 +19,8 @@
   "dependencies": {
     "apollo-server": "^2.19.0",
     "dotenv": "^8.2.0",
-    "mongoose": "^5.10.15"
+    "mongoose": "^5.10.15",
+    "serve": "^11.3.2"
   },
   "devDependencies": {
     "bcryptjs": "^2.4.3",

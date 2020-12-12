@@ -251,8 +251,7 @@ const resolvers = {
             }
         },
             actualizarUsuario: async (_, {id,  input }, ctx) => {
-                console.log('Datos id', id)
-                console.log('Datos input', input)
+
                 //Revisar si el cliente existe o no
                 let usuario = await Usuario.findById(id);
                 

@@ -9,6 +9,10 @@ const ProductosSchema = mongoose.Schema({
         type: String,
         require: true
     },
+    categoria: {
+        type: String,
+        require: false
+    },
     imagen: {
         type: String,
         require: false,

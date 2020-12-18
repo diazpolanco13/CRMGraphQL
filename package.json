@@ -13,6 +13,7 @@
   "author": "Carlos Diaz",
   "license": "ISC",
   "dependencies": {
+    "@headlessui/react": "^0.2.0",
     "apollo-server": "^2.19.0",
     "bcryptjs": "^2.4.3",
     "dotenv": "^8.2.0",

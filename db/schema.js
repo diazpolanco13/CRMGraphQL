@@ -21,6 +21,7 @@ const typeDefs = gql`
         imagen: String
         nombre: String
         descripcion: String
+        categoria: String
         existencia: Int
         precio: Float
         moneda: String
@@ -93,6 +94,7 @@ const typeDefs = gql`
         descripcion: String!
         existencia: Int!
         precio: Float!
+        categoria: String
         moneda: TipoMoneda
         imagen: String
     }
